@@ -2,11 +2,17 @@ import React from 'react';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 import homeimg from '../../assests/home-img.jpg';
+import Spinner from '../../Components/Spinner/Spinner';
 
 const Home = () => {
     const sectors = ['Web Designer', 'App Developer', 'Web Developer', 'Marketing Department', 'Finance Department', 'Security Department'];
 
-    const [accept, setAccept] = useState("false")
+    const [accept, setAccept] = useState("false");
+    const [loading, setLoading] = useState(false);
+
+    if(loading){
+        return <Spinner></Spinner>
+    }
 
     //get form data
     const handleFormData = event => {
@@ -20,11 +26,12 @@ const Home = () => {
             acceptTerms: accept
         }
         addToDb(formData, name);
+        setLoading(true);
     };
 
     //send form data to db
     const addToDb = (data, name) => {
-        fetch('http://localhost:5000/formdata', {
+        fetch('https://job-task-server-ruby.vercel.app/formdata', {
             method: 'POST',
             headers: {
                 'content-type': 'application/json'
@@ -35,6 +42,7 @@ const Home = () => {
             .then(data => {
                 if(data.acknowledged){
                     localStorage.setItem('name', name);
+                    setLoading(false);
                     toast.success('Data Successfully Submited');
                 }
             })
